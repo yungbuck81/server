@@ -13,20 +13,26 @@ block content
       if division.start_time || division.discord_url || divisionAdmins || division.draft_sheet_url
         h4.title
           span Useful Information
-        if division.start_time
-          strong Start Time
-          p
-            span &nbsp;#{division.start_time}
-        if division.discord_url
-          strong Discord URL
-          p
-            a(href='https://discord.gg/' + division.discord_url) Invite Link
-        if division.draft_sheet_url
-          strong Draft Sheet URL
-          p
-            a(href=division.draft_sheet_url) Draft Sheet
-        if divisionAdmins
-          strong Division Admins
+  div.columns
+    if division.start_time
+      div.column
+        strong Start Time
+        p
+          span &nbsp;#{division.start_time}
+    if division.discord_url
+      div.column
+        strong Discord URL
+        p
+          a(href='https://discord.gg/' + division.discord_url) Invite Link
+    if division.draft_sheet_url
+      div.column
+        strong Draft Sheet URL
+        p
+          a(href=division.draft_sheet_url) Draft Sheet
+  div.columns
+    div.column
+      if divisionAdmins
+        strong Division Admins
   div.columns
       if divisionAdmins
         each divisionAdmin in divisionAdmins
