@@ -31,7 +31,8 @@ function config(env) {
       password: env.STEAM_BOT_PASSWORD || false
     },
     templates: {
-      title: 'RD2L'
+      title: 'RD2L',
+      divisions: () => Promise.resolve([])
     }
   }
 }

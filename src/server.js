@@ -71,6 +71,9 @@ var rolePages = require('./pages/roles')(templates, role)
 var adminPages = require('./pages/admins')(templates, admin, division, admin_group)
 var adminGroupPages = require('./pages/admin_groups')(templates, admin_group)
 
+//Extra Config Stuff
+config.templates.divisions = division.getDivisions
+
 // API routes
 // none currently
 
