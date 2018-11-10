@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 let available = false
 
 function getMMR(dota2, id) {

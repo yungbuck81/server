@@ -314,9 +314,9 @@ if (fs.existsSync(path.join(__dirname, 'assets', 'servers.json'))) {
 
 migration.migrateIfNeeded(
   migration.getMigrations(path.join(__dirname, 'migrations')))
-  .then(versions => {
+  .then(migrations => {
     console.log(
-      `RUN ${versions.filter(version => version !== false).length} MIGRATIONS`)
+      `RUN ${migrations.length} MIGRATIONS`)
 
     if (config.steam.username && config.steam.password) {
       steam.connect()

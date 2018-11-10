@@ -1,9 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const sql = require('pg-sql').sql
-const Promise = require('bluebird')
 
-function migrateIfNeeded(db, migrations) {
+async function migrateIfNeeded(db, migrations) {
   // 2 - check if the migrations table exists
   // 3 - get latest migration from table if exists
   // 4 - get latest migration from list of migrations
@@ -17,40 +16,35 @@ function migrateIfNeeded(db, migrations) {
     return 0
   })
 
-  return Promise.mapSeries(migrations, migration => {
-    return db.query('SELECT version FROM migration').catch(() => {
-      console.log('MIGRATION TABLE DOES NOT EXIST')
-    }).then(result => {
-      const versions = result
-        ? result.rows.map(row => { return row.version })
-        : []
-      const contained = versions.indexOf(migration.name) > -1
+  try {
+    let versions = await db.query('SELECT version FROM migration')
+    if (versions) {
+      versions = versions.map(row => row.version)
+      migrations = migrations.filter(m => !versions.includes(m.name))
+    }
 
-      if (!contained) {
-        console.log(`RUNNING MIGRATION ${migration.name}`)
-        return db.query(migration.contents).then(() => {
-          console.log('UPDATING MIGRATION VERSION')
-          const insert = sql`
-            INSERT INTO migration (
-              version,
-              migrated
-            )
-            VALUES (
-              ${migration.name},
-              ${new Date().toUTCString()}::timestamp with time zone
-            )
-            RETURNING version;`
-          return db.query(insert)
-        }).then(result => {
-          console.log(`VERSION: ${result.rows[0].version}`)
-          return Promise.resolve(result.rows[0].version)
-        })
-      } else {
-        console.log('MIGRATION ALREADY RUN')
-        return Promise.resolve(false)
-      }
-    })
-  })
+    for (const migration of migrations) {
+      console.log(`RUNNING MIGRATION ${migration.name}`)
+      await db.query(migration.contents)
+      console.log('UPDATING MIGRATION VERSION')
+      const insert = sql`
+        INSERT INTO migration (
+          version,
+          migrated
+        )
+        VALUES (
+          ${migration.name},
+          ${new Date().toUTCString()}::timestamp with time zone
+        )
+        RETURNING version;`
+      const result = await db.query(insert)
+      console.log(`VERSION: ${result.rows[0].version}`)
+    }
+  } catch(err) {
+    console.log(err)
+  }
+
+  return migrations
 }
 
 // Default implementation

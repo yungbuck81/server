@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "bignumber.js": "^6.0.0",
-    "bluebird": "^3.5.2",
     "body-parser": "^1.18.3",
     "connect-redis": "^3.4.0",
     "cookie-parser": "^1.4.3",
